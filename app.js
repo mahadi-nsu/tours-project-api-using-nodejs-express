@@ -3,15 +3,16 @@ const fs = require('fs');
 
 const app = express();
 const port = 3000;
+//add json parsing middleware
+app.use(express.json());
 
 //fetch data from file
 const tours = JSON.parse(
     fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
-// GET req
-app.get('/api/v1/tours', (req, res) => {
-    // res.status(200).send("backend is working");
-    // console.log(tours);
+
+//functions
+const getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
         results: tours.length,
@@ -19,9 +20,9 @@ app.get('/api/v1/tours', (req, res) => {
             tours
         }
     })
-})
+}
 
-app.get('/api/v1/tours/:id', (req, res) => {
+const getTour = (req, res) => {
     const id = req.params.id * 1;
     //   if(id>tours.length){
     //     return res.status(404).json({
@@ -32,40 +33,28 @@ app.get('/api/v1/tours/:id', (req, res) => {
     const tour = tours.find(function (element) {
         return (element.id === id);
     });
-
     if (!tour) {
         return res.status(404).json({
             status: 'fail',
             message: 'Tour doesnt exist'
         })
     }
-
     res.status(200).json({
         status: 'success',
         data: {
             tour
         }
     })
-})
+}
 
-//add json parsing middleware
-app.use(express.json());
-//setroute
-// POST req
-app.post('/api/v1/tours', (req, res) => {
-    //  create new id for new tour
+const createTour =  (req, res) => {
     const newId = tours[tours.length - 1].id * 1 + 1;
     console.log(newId);
-    //  create new object and assign id and request body to the object
     const newTour = Object.assign(
         { id: newId },
         req.body
     )
-    console.log(newTour);
-    //  push object to tours
     tours.push(newTour);
-    // console.log(tours);
-    //  write into the file
     fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
         res.status(201).json({
             status: "success",
@@ -74,12 +63,9 @@ app.post('/api/v1/tours', (req, res) => {
             }
         })
     })
-    //  send response 
-})
-//take request body
+}
 
-///PATCH 
-app.patch('/api/v1/tours/:id', (req, res) =>{
+const updateTour = (req, res) =>{
     if (id > tours.length) {
         return res.status(404).json({
             status: 'fail',
@@ -96,24 +82,30 @@ app.patch('/api/v1/tours/:id', (req, res) =>{
             tour: tour
         }
     })
+}
 
-});
-// delete
-app.delete('/api/v1/tours/:id',(req,res)=>{
+const deleteTour = (req,res)=>{
     const id = req.params.id*1;
     console.log(id);
     if(id>tours.length){
         return res.status(404).json({
             status : 'fail',
             message : 'Invalid ID'
-        })
+        }) 
     }
-
     res.status(204).json({
         status : 'success',
         data : null
     })
-})
+}
+
+// All routes
+app.get('/api/v1/tours',getAllTours);
+app.get('/api/v1/tours/:id',getTour);
+app.post('/api/v1/tours',createTour);
+app.patch('/api/v1/tours/:id',updateTour);
+app.delete('/api/v1/tours/:id',deleteTour);
+
 
 //server
 app.listen(port, () => {
