@@ -1,15 +1,24 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
 const port = 3000;
 //add json parsing middleware
 app.use(express.json());
+app.use(morgan('dev'));
 
 //fetch data from file
 const tours = JSON.parse(
     fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
+
+//adding custom middleware
+app.use((req,res,next)=>{
+    console.log("hello from middleware");
+    req.requestTime
+    next();
+});
 
 //functions
 const getAllTours = (req, res) => {
@@ -106,7 +115,42 @@ const deleteTour = (req,res)=>{
 // app.patch('/api/v1/tours/:id',updateTour);
 // app.delete('/api/v1/tours/:id',deleteTour);
 
-//route add
+const getAllUsers = (req,res) =>{
+    res.status(500).json({
+        status : "error",
+        message : "This route is not implemented yet"
+    })
+}
+
+const createUser = (req,res) =>{
+    res.status(500).json({
+        status : "error",
+        message : "This route is not implemented yet"
+    })
+}
+
+const getUser = (req,res) =>{
+    res.status(500).json({
+        status : "error",
+        message : "This route is not implemented yet"
+    })
+}
+
+const updateUser = (req,res) =>{
+    res.status(500).json({
+        status : "error",
+        message : "This route is not implemented yet"
+    })
+}
+
+const deleteUser = (req,res) =>{
+    res.status(500).json({
+        status : "error",
+        message : "This route is not implemented yet"
+    })
+}
+
+//Tour routes
 app
    .route('/api/v1/tours')
    .get(getAllTours)
@@ -117,6 +161,16 @@ app
    .patch(updateTour)
    .delete(deleteTour)
 
+//User routes
+app
+   .route('/api/v1/users')
+   .get(getAllUsers)
+   .post(createUser);
+app
+   .route('/api/v1/users/:id')
+   .get(getUser)
+   .patch(updateUser)
+   .delete(deleteUser)
 //server
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
