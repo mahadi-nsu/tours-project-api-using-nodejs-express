@@ -79,7 +79,7 @@ app.post('/api/v1/tours', (req, res) => {
 //take request body
 
 ///PATCH 
-app.patch('/api/v1/patch/:id', (req, res) =>{
+app.patch('/api/v1/tours/:id', (req, res) =>{
     if (id > tours.length) {
         return res.status(404).json({
             status: 'fail',
@@ -97,7 +97,25 @@ app.patch('/api/v1/patch/:id', (req, res) =>{
         }
     })
 
+});
+// delete
+app.delete('/api/v1/tours/:id',(req,res)=>{
+    const id = req.params.id*1;
+    console.log(id);
+    if(id>tours.length){
+        return res.status(404).json({
+            status : 'fail',
+            message : 'Invalid ID'
+        })
+    }
+
+    res.status(204).json({
+        status : 'success',
+        data : null
+    })
 })
+
+//server
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
 })
