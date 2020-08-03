@@ -1,6 +1,9 @@
 const express = require('express');
 const fs = require('fs');
 const morgan = require('morgan');
+var path = require('path');
+
+// const tourRouter = require('./routes/tourRoutes');
 
 const app = express();
 const port = 3000;
@@ -8,10 +11,15 @@ const port = 3000;
 app.use(express.json());
 app.use(morgan('dev'));
 
-//fetch data from file
-const tours = JSON.parse(
-    fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-);
+// app.use(morgan('combined'));
+// create a write stream (in append mode)
+// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+
+
+// //fetch data from file
+// const tours = JSON.parse(
+//     fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+// );
 
 //adding custom middleware
 app.use((req, res, next) => {
@@ -26,94 +34,96 @@ app.use((req, res, next) => {
     next();
 });
 
+
+
 //functions
-const getAllTours = (req, res) => {
-    res.status(200).json({
-        status: "success",
-        requestedTime: req.requestedTime,
-        results: tours.length,
-        data: {
-            tours
-        }
-    })
-}
+// const getAllTours = (req, res) => {
+//     res.status(200).json({
+//         status: "success",
+//         requestedTime: req.requestedTime,
+//         results: tours.length,
+//         data: {
+//             tours
+//         }
+//     })
+// }
 
-const getTour = (req, res) => {
-    const id = req.params.id * 1;
-    //   if(id>tours.length){
-    //     return res.status(404).json({
-    //         status : 'fail',
-    //         message : 'invalid ID'
-    //     })
-    //   }
-    const tour = tours.find(function (element) {
-        return (element.id === id);
-    });
-    if (!tour) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Tour doesnt exist'
-        })
-    }
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour
-        }
-    })
-}
+// const getTour = (req, res) => {
+//     const id = req.params.id * 1;
+//     //   if(id>tours.length){
+//     //     return res.status(404).json({
+//     //         status : 'fail',
+//     //         message : 'invalid ID'
+//     //     })
+//     //   }
+//     const tour = tours.find(function (element) {
+//         return (element.id === id);
+//     });
+//     if (!tour) {
+//         return res.status(404).json({
+//             status: 'fail',
+//             message: 'Tour doesnt exist'
+//         })
+//     }
+//     res.status(200).json({
+//         status: 'success',
+//         data: {
+//             tour
+//         }
+//     })
+// }
 
-const createTour = (req, res) => {
-    const newId = tours[tours.length - 1].id * 1 + 1;
-    console.log(newId);
-    const newTour = Object.assign(
-        { id: newId },
-        req.body
-    )
-    tours.push(newTour);
-    fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
-        res.status(201).json({
-            status: "success",
-            data: {
-                tour: newTour
-            }
-        })
-    })
-}
+// const createTour = (req, res) => {
+//     const newId = tours[tours.length - 1].id * 1 + 1;
+//     console.log(newId);
+//     const newTour = Object.assign(
+//         { id: newId },
+//         req.body
+//     )
+//     tours.push(newTour);
+//     fs.writeFile(`${__dirname}/dev-data/data/tours-simple.json`, JSON.stringify(tours), err => {
+//         res.status(201).json({
+//             status: "success",
+//             data: {
+//                 tour: newTour
+//             }
+//         })
+//     })
+// }
 
-const updateTour = (req, res) => {
-    if (id > tours.length) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'invalid ID'
-        })
-    }
-    id = req.params.id * 1;
-    const tour = tours.find(function (element) {
-        return (element.id === id);
-    });
-    res.status(200).json({
-        status: "Success",
-        data: {
-            tour: tour
-        }
-    })
-}
+// const updateTour = (req, res) => {
+//     if (id > tours.length) {
+//         return res.status(404).json({
+//             status: 'fail',
+//             message: 'invalid ID'
+//         })
+//     }
+//     id = req.params.id * 1;
+//     const tour = tours.find(function (element) {
+//         return (element.id === id);
+//     });
+//     res.status(200).json({
+//         status: "Success",
+//         data: {
+//             tour: tour
+//         }
+//     })
+// }
 
-const deleteTour = (req, res) => {
-    const id = req.params.id * 1;
-    console.log(id);
-    if (id > tours.length) {
-        return res.status(404).json({
-            status: 'fail',
-            message: 'Invalid ID'
-        })
-    }
-    res.status(204).json({
-        status: 'success',
-        data: null
-    })
-}
+// const deleteTour = (req, res) => {
+//     const id = req.params.id * 1;
+//     console.log(id);
+//     if (id > tours.length) {
+//         return res.status(404).json({
+//             status: 'fail',
+//             message: 'Invalid ID'
+//         })
+//     }
+//     res.status(204).json({
+//         status: 'success',
+//         data: null
+//     })
+// }
 
 // All routes
 // app.get('/api/v1/tours',getAllTours);
@@ -165,19 +175,20 @@ const deleteUser = (req, res) => {
 // app.delete('/api/v1/tours/:id',deleteTour);
 
 //Tour routes
-const tourRouter = express.Router();
+// const tourRouter = express.Router();
+const tourRouter = require('./routes/tourRoutes');
 app.use('/api/v1/tours', tourRouter);
 
-// const tourRouter = express.Router();
-tourRouter
-    .route('/')
-    .get(getAllTours)
-    .post(createTour);
-tourRouter
-    .route('/:id')
-    .get(getTour)
-    .patch(updateTour)
-    .delete(deleteTour)
+// const tourRouter = 
+// tourRouter
+//     .route('/')
+//     .get(getAllTours)
+//     .post(createTour);
+// tourRouter
+//     .route('/:id')
+//     .get(getTour)
+//     .patch(updateTour)
+//     .delete(deleteTour)
 
 //User routes
 const userRouter = express.Router();
