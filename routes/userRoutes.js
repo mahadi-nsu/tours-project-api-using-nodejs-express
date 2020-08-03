@@ -47,4 +47,4 @@ router
     .patch(updateUser)
     .delete(deleteUser)
 
-module.exports = routes;
+module.exports = router;
