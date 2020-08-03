@@ -14,9 +14,15 @@ const tours = JSON.parse(
 );
 
 //adding custom middleware
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     console.log("hello from middleware");
-    req.requestTime
+    // req.requestTime
+    next();
+});
+
+//middleware to show the request time
+app.use((req, res, next) => {
+    req.requestedTime = new Date().toISOString();
     next();
 });
 
@@ -24,6 +30,7 @@ app.use((req,res,next)=>{
 const getAllTours = (req, res) => {
     res.status(200).json({
         status: "success",
+        requestedTime: req.requestedTime,
         results: tours.length,
         data: {
             tours
@@ -56,7 +63,7 @@ const getTour = (req, res) => {
     })
 }
 
-const createTour =  (req, res) => {
+const createTour = (req, res) => {
     const newId = tours[tours.length - 1].id * 1 + 1;
     console.log(newId);
     const newTour = Object.assign(
@@ -74,14 +81,14 @@ const createTour =  (req, res) => {
     })
 }
 
-const updateTour = (req, res) =>{
+const updateTour = (req, res) => {
     if (id > tours.length) {
         return res.status(404).json({
             status: 'fail',
             message: 'invalid ID'
         })
-    } 
-    id = req.params.id *1;
+    }
+    id = req.params.id * 1;
     const tour = tours.find(function (element) {
         return (element.id === id);
     });
@@ -93,18 +100,18 @@ const updateTour = (req, res) =>{
     })
 }
 
-const deleteTour = (req,res)=>{
-    const id = req.params.id*1;
+const deleteTour = (req, res) => {
+    const id = req.params.id * 1;
     console.log(id);
-    if(id>tours.length){
+    if (id > tours.length) {
         return res.status(404).json({
-            status : 'fail',
-            message : 'Invalid ID'
-        }) 
+            status: 'fail',
+            message: 'Invalid ID'
+        })
     }
     res.status(204).json({
-        status : 'success',
-        data : null
+        status: 'success',
+        data: null
     })
 }
 
@@ -115,38 +122,38 @@ const deleteTour = (req,res)=>{
 // app.patch('/api/v1/tours/:id',updateTour);
 // app.delete('/api/v1/tours/:id',deleteTour);
 
-const getAllUsers = (req,res) =>{
+const getAllUsers = (req, res) => {
     res.status(500).json({
-        status : "error",
-        message : "This route is not implemented yet"
+        status: "error",
+        message: "This route is not implemented yet"
     })
 }
 
-const createUser = (req,res) =>{
+const createUser = (req, res) => {
     res.status(500).json({
-        status : "error",
-        message : "This route is not implemented yet"
+        status: "error",
+        message: "This route is not implemented yet"
     })
 }
 
-const getUser = (req,res) =>{
+const getUser = (req, res) => {
     res.status(500).json({
-        status : "error",
-        message : "This route is not implemented yet"
+        status: "error",
+        message: "This route is not implemented yet"
     })
 }
 
-const updateUser = (req,res) =>{
+const updateUser = (req, res) => {
     res.status(500).json({
-        status : "error",
-        message : "This route is not implemented yet"
+        status: "error",
+        message: "This route is not implemented yet"
     })
 }
 
-const deleteUser = (req,res) =>{
+const deleteUser = (req, res) => {
     res.status(500).json({
-        status : "error",
-        message : "This route is not implemented yet"
+        status: "error",
+        message: "This route is not implemented yet"
     })
 }
 
@@ -159,30 +166,31 @@ const deleteUser = (req,res) =>{
 
 //Tour routes
 const tourRouter = express.Router();
-app.use('/api/v1/tours',tourRouter)
+app.use('/api/v1/tours', tourRouter);
+
 // const tourRouter = express.Router();
 tourRouter
-   .route('/')
-   .get(getAllTours)
-   .post(createTour);
+    .route('/')
+    .get(getAllTours)
+    .post(createTour);
 tourRouter
-   .route('/:id')
-   .get(getTour)
-   .patch(updateTour)
-   .delete(deleteTour)
+    .route('/:id')
+    .get(getTour)
+    .patch(updateTour)
+    .delete(deleteTour)
 
 //User routes
 const userRouter = express.Router();
-app.use('/api/v1/users' ,userRouter )
+app.use('/api/v1/users', userRouter)
 userRouter
-   .route('/')
-   .get(getAllUsers)
-   .post(createUser);
+    .route('/')
+    .get(getAllUsers)
+    .post(createUser);
 userRouter
-   .route('/:id')
-   .get(getUser)
-   .patch(updateUser)
-   .delete(deleteUser)
+    .route('/:id')
+    .get(getUser)
+    .patch(updateUser)
+    .delete(deleteUser)
 //server
 app.listen(port, () => {
     console.log(`App is running on port ${port}`);
