@@ -5,8 +5,9 @@ const tours = JSON.parse(
     fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
-exports.checkID = (req, res, next, val) => {
-    console.log(`tour id is ${val}`);
+exports.checkID = (req, res, next) => {
+    // console.log(`tour id is ${val}`);
+    // console.log("Mahadi");
     const id = req.params.id;
     if (id > tours.length) {
         return res.status(404).json({
@@ -14,7 +15,31 @@ exports.checkID = (req, res, next, val) => {
             message: 'invalid ID'
         })
     }
+    next();
+}
 
+exports.checkInputDatas = (req, res, next) => {
+    let data = req.body.name;
+    console.log("Mahadi");
+    console.log(data);
+    if (data.length === 0) {
+        return res.status(404).json({
+            status: 'fail',
+            message: `You can't provide empty data`
+        })
+    }
+    next();
+}
+
+exports.checkInputName = (req, res, next) => {
+    console.log(req.body);
+    let name = req.body.name;
+    if (!name) {
+        return res.status(404).json({
+            status: 'fail',
+            message: `You can't provide empty name`
+        })
+    }
     next();
 }
 
