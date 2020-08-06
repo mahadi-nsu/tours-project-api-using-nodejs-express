@@ -9,6 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 
+// serve static files
+app.use(express.static(`${__dirname}/public`));
+
 //middleware to show the request time
 app.use((req, res, next) => {
     req.requestedTime = new Date().toISOString();
