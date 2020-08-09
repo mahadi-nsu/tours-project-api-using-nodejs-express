@@ -19,8 +19,7 @@ app.use((req, res, next) => {
 });
 
 
-//Tour routes
-// const tourRouter = express.Router();
+// routes
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
